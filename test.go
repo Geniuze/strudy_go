@@ -1,34 +1,25 @@
 package main
 
 import "fmt"
+//import "time"
+// time.Sleep(1e9) 1秒钟
 
-type Integer int
-
-func (a Integer) Less (b Integer) bool {
-    return a<b
-}
-func (a *Integer) Add (b Integer) {
-    *a += b
+func Add (x, y int, ch chan int) {
+    z := x + y
+    ch <- z
 }
 
-type Base struct {
-    Name string
-}
-func (base *Base) Foo(){...}
-func (base *Base) Bar(){...}
+func main() {
+    // make(chan int, 1)创建一个缓存的channel，无缓存的channel在写入数据时会阻塞等待读取
+    ch := make(chan int, 1)
 
-type Foo struct {
-    Base
-    ...
+    for {
+        select {
+            case ch <- 1:
+            case ch <- 0:
+        }
+        i := <- ch
+        fmt.Println("Receive value:", i)
+    }
 }
 
-func (foo *Foo) Bar(){
-    foo.Base.Bar()
-}
-
-func main(){
-    var i Integer = 3
-    fmt.Println("a Less 5", i.Less(5))
-    i.Add(5)
-    fmt.Println("a Add 5 =", i)
-}
